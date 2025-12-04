@@ -47,12 +47,14 @@ export async function analyzeFashionWithGemini(
   
   console.log('Gemini API 호출 시작 - 이미지 크기:', imageFile.size, 'bytes, 타입:', mimeType);
   
-  // gemini-2.5-flash 모델만 사용
-  const modelName = 'gemini-2.5-flash';
+  // pro 모델 먼저 시도, 실패하면 flash 모델 사용
+  const modelsToTry = ['gemini-2.5-pro', 'gemini-1.5-pro', 'gemini-2.5-flash', 'gemini-1.5-flash'];
+  let lastError: Error | null = null;
   
-  try {
-    console.log(`모델 사용: ${modelName}`);
-    const model = genAI.getGenerativeModel({ model: modelName });
+  for (const modelName of modelsToTry) {
+    try {
+      console.log(`모델 시도: ${modelName}`);
+      const model = genAI.getGenerativeModel({ model: modelName });
       
       const prompt = `이 이미지는 상하의를 입고 있는 사람의 사진입니다. 다음 정보를 분석하여 JSON 형식으로 응답해주세요:
 
@@ -134,19 +136,25 @@ export async function analyzeFashionWithGemini(
         throw new Error('Gemini API 응답에 필수 필드가 없습니다');
       }
       
-    console.log('Gemini API 분석 성공 (모델:', modelName, '):', {
-      topColors: analysis.topColors,
-      bottomColors: analysis.bottomColors,
-      topPattern: analysis.topPattern,
-      bottomPattern: analysis.bottomPattern,
-      topStyle: analysis.topStyle,
-      bottomStyle: analysis.bottomStyle,
-    });
-    
-    return analysis;
-  } catch (err) {
-    console.error(`모델 ${modelName} 실패:`, err instanceof Error ? err.message : String(err));
-    throw new Error(`이미지 분석 실패: ${err instanceof Error ? err.message : String(err)}`);
+      console.log('Gemini API 분석 성공 (모델:', modelName, '):', {
+        topColors: analysis.topColors,
+        bottomColors: analysis.bottomColors,
+        topPattern: analysis.topPattern,
+        bottomPattern: analysis.bottomPattern,
+        topStyle: analysis.topStyle,
+        bottomStyle: analysis.bottomStyle,
+      });
+      
+      return analysis;
+    } catch (err) {
+      console.error(`모델 ${modelName} 실패:`, err instanceof Error ? err.message : String(err));
+      lastError = err instanceof Error ? err : new Error(String(err));
+      // 다음 모델 시도
+      continue;
+    }
   }
+  
+  // 모든 모델 실패
+  throw new Error(`이미지 분석 실패: 모든 모델 시도 실패. 마지막 에러: ${lastError?.message || 'Unknown error'}`);
 }
 

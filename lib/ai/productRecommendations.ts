@@ -83,12 +83,14 @@ ${improvements.map(imp => `- ${imp.category}: ${imp.suggestion}`).join('\n')}
 최대 3-5개의 아이템을 추천하고, 각 아이템은 구체적이고 실제로 구매 가능한 제품명을 사용해주세요. 
 예상 가격은 한국 시장 기준으로 현실적인 가격 범위를 제시해주세요.`;
 
-  // gemini-2.5-flash 모델만 사용
-  const modelName = 'gemini-2.5-flash';
+  // pro 모델 먼저 시도, 실패하면 flash 모델 사용
+  const modelsToTry = ['gemini-2.5-pro', 'gemini-1.5-pro', 'gemini-2.5-flash', 'gemini-1.5-flash'];
+  let lastError: Error | null = null;
   
-  try {
-    console.log(`구매 추천 생성 시도 - 모델: ${modelName}`);
-    const model = genAI.getGenerativeModel({ model: modelName });
+  for (const modelName of modelsToTry) {
+    try {
+      console.log(`구매 추천 생성 시도 - 모델: ${modelName}`);
+      const model = genAI.getGenerativeModel({ model: modelName });
 
       const result = await model.generateContent(prompt);
       const response = result.response;
@@ -116,12 +118,19 @@ ${improvements.map(imp => `- ${imp.category}: ${imp.suggestion}`).join('\n')}
         throw new Error('추천 아이템 형식이 올바르지 않습니다.');
       }
 
-    console.log('구매 추천 생성 성공 (모델:', modelName, '):', recommendations.products.length, '개 아이템');
-    return recommendations;
-  } catch (err) {
-    console.error(`구매 추천 생성 실패:`, err instanceof Error ? err.message : String(err));
-    // 기본 추천 반환
-    return {
+      console.log('구매 추천 생성 성공 (모델:', modelName, '):', recommendations.products.length, '개 아이템');
+      return recommendations;
+    } catch (err) {
+      console.error(`모델 ${modelName} 실패:`, err instanceof Error ? err.message : String(err));
+      lastError = err instanceof Error ? err : new Error(String(err));
+      // 다음 모델 시도
+      continue;
+    }
+  }
+  
+  // 모든 모델 실패 시 기본 추천 반환
+  console.error('모든 모델 실패, 기본 추천 반환');
+  return {
       products: [
         {
           category: 'top',

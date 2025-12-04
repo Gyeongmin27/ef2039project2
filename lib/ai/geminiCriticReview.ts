@@ -15,12 +15,14 @@ export async function generateCriticReviewWithGemini(
   scores: EvaluationScores,
   analysisData: AnalysisData
 ): Promise<string> {
-  // gemini-2.5-flash 모델만 사용
-  const modelName = 'gemini-2.5-flash';
+  // pro 모델 먼저 시도, 실패하면 flash 모델 사용
+  const modelsToTry = ['gemini-2.5-pro', 'gemini-1.5-pro', 'gemini-2.5-flash', 'gemini-1.5-flash'];
+  let lastError: Error | null = null;
   
-  try {
-    console.log(`비평가 평가 모델 사용: ${modelName}`);
-    const model = genAI.getGenerativeModel({ model: modelName });
+  for (const modelName of modelsToTry) {
+    try {
+      console.log(`비평가 평가 모델 시도: ${modelName}`);
+      const model = genAI.getGenerativeModel({ model: modelName });
 
       const prompt = `당신은 전문 패션 비평가입니다. 다음 패션 스타일 평가 결과를 바탕으로 전문적이고 객관적인 한 줄 평가를 작성해주세요.
 
@@ -61,14 +63,19 @@ export async function generateCriticReviewWithGemini(
       // 마크다운이나 따옴표 제거
       review = review.replace(/^["']|["']$/g, '').replace(/```/g, '').trim();
 
-    console.log(`비평가 평가 생성 성공 (모델: ${modelName})`);
-    return review;
-  } catch (err) {
-    console.error(`비평가 평가 모델 ${modelName} 실패:`, err instanceof Error ? err.message : String(err));
-    // 폴백 평가 반환
-    console.error('폴백 평가 사용');
-    return generateFallbackReview(scores);
+      console.log(`비평가 평가 생성 성공 (모델: ${modelName})`);
+      return review;
+    } catch (err) {
+      console.error(`모델 ${modelName} 실패:`, err instanceof Error ? err.message : String(err));
+      lastError = err instanceof Error ? err : new Error(String(err));
+      // 다음 모델 시도
+      continue;
+    }
   }
+  
+  // 모든 모델 실패 시 폴백 평가 반환
+  console.error('모든 모델 실패, 폴백 평가 사용');
+  return generateFallbackReview(scores);
 }
 
 /**
