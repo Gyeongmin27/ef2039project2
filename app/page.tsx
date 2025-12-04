@@ -110,7 +110,12 @@ export default function Home() {
       ` : ''}
       <div class="space-y-4">
         ${recommendations.products.map((product, index) => {
-          const searchQuery = `${product.category === 'top' ? '상의' : product.category === 'bottom' ? '하의' : '액세서리'} ${product.name} ${product.color || ''}`;
+          // 무신사 검색 시 색상 정보 제외
+          const categoryLabel = product.category === 'top' ? '상의' : product.category === 'bottom' ? '하의' : '액세서리';
+          const searchQuery = `${categoryLabel} ${product.name}`;
+          const colorRgb = product.color && product.color.match(/^#[0-9A-Fa-f]{6}$/) 
+            ? `RGB(${parseInt(product.color.slice(1, 3), 16)}, ${parseInt(product.color.slice(3, 5), 16)}, ${parseInt(product.color.slice(5, 7), 16)})`
+            : '';
           return `
           <div class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow bg-white">
             <div class="flex items-start justify-between mb-3">
@@ -123,10 +128,13 @@ export default function Home() {
                 </div>
                 <p class="text-gray-700 mb-2 font-medium">${escapeHtml(product.description)}</p>
                 ${product.color ? `
-                  <div class="flex items-center space-x-2 mb-2">
+                  <div class="flex items-center space-x-3 mb-2">
                     <span class="text-sm text-gray-600">추천 색상:</span>
-                    <div class="w-6 h-6 rounded border border-gray-300" style="background-color: ${escapeHtml(product.color)}"></div>
-                    <span class="text-sm text-gray-700">${escapeHtml(product.color)}</span>
+                    <div class="w-8 h-8 rounded border-2 border-gray-300 shadow-sm" style="background-color: ${escapeHtml(product.color)}"></div>
+                    <div class="flex flex-col">
+                      <span class="text-sm font-medium text-gray-900">${escapeHtml(product.color)}</span>
+                      ${colorRgb ? `<span class="text-xs text-gray-500">${colorRgb}</span>` : ''}
+                    </div>
                   </div>
                 ` : ''}
                 ${product.style ? `

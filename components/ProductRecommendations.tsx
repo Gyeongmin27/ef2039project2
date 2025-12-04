@@ -14,8 +14,9 @@ export default function ProductRecommendations({ recommendations }: ProductRecom
     setSearching({ ...searching, [product.name]: true });
 
     try {
-      // 무신사 검색 URL 생성
-      const searchQuery = `${product.category === 'top' ? '상의' : product.category === 'bottom' ? '하의' : '액세서리'} ${product.name} ${product.color || ''}`;
+      // 무신사 검색 URL 생성 (색상 정보 제외)
+      const categoryLabel = product.category === 'top' ? '상의' : product.category === 'bottom' ? '하의' : '액세서리';
+      const searchQuery = `${categoryLabel} ${product.name}`;
       const encodedQuery = encodeURIComponent(searchQuery);
       const searchUrl = `https://www.musinsa.com/search/musinsa/goods?q=${encodedQuery}`;
 
@@ -84,13 +85,20 @@ export default function ProductRecommendations({ recommendations }: ProductRecom
                 </div>
                 <p className="text-gray-700 mb-2 font-medium">{product.description}</p>
                 {product.color && (
-                  <div className="flex items-center space-x-2 mb-2">
+                  <div className="flex items-center space-x-3 mb-2">
                     <span className="text-sm text-gray-600">추천 색상:</span>
                     <div
-                      className="w-6 h-6 rounded border border-gray-300"
+                      className="w-8 h-8 rounded border-2 border-gray-300 shadow-sm"
                       style={{ backgroundColor: product.color }}
                     />
-                    <span className="text-sm text-gray-700">{product.color}</span>
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium text-gray-900">{product.color}</span>
+                      {product.color.match(/^#[0-9A-Fa-f]{6}$/) && (
+                        <span className="text-xs text-gray-500">
+                          RGB({parseInt(product.color.slice(1, 3), 16)}, {parseInt(product.color.slice(3, 5), 16)}, {parseInt(product.color.slice(5, 7), 16)})
+                        </span>
+                      )}
+                    </div>
                   </div>
                 )}
                 {product.style && (
