@@ -48,7 +48,7 @@ export async function analyzeFashionWithGemini(
   console.log('Gemini API 호출 시작 - 이미지 크기:', imageFile.size, 'bytes, 타입:', mimeType);
   
   // pro 모델 먼저 시도, 실패하면 flash 모델 사용
-  const modelsToTry = ['gemini-2.5-pro', 'gemini-1.5-pro', 'gemini-2.5-flash', 'gemini-1.5-flash'];
+  const modelsToTry = ['gemini-2.5-pro', 'gemini-2.5-flash'];
   let lastError: Error | null = null;
   
   for (const modelName of modelsToTry) {
