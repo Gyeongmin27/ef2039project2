@@ -110,9 +110,11 @@ export default function Home() {
       ` : ''}
       <div class="space-y-4">
         ${recommendations.products.map((product, index) => {
-          // 무신사 검색 시 색상 정보 제외
+          // 무신사 검색 시 색상 정보 제외 (HEX 코드 제거)
           const categoryLabel = product.category === 'top' ? '상의' : product.category === 'bottom' ? '하의' : '액세서리';
-          const searchQuery = `${categoryLabel} ${product.name}`;
+          // product.name에서 HEX 색상 코드 제거 (#FFFFFF, #fff 등)
+          const cleanProductName = product.name.replace(/#[0-9A-Fa-f]{3,6}\b/gi, '').trim();
+          const searchQuery = `${categoryLabel} ${cleanProductName}`;
           const colorRgb = product.color && product.color.match(/^#[0-9A-Fa-f]{6}$/) 
             ? `RGB(${parseInt(product.color.slice(1, 3), 16)}, ${parseInt(product.color.slice(3, 5), 16)}, ${parseInt(product.color.slice(5, 7), 16)})`
             : '';

@@ -16,7 +16,9 @@ export default function ProductRecommendations({ recommendations }: ProductRecom
     try {
       // 무신사 검색 URL 생성 (색상 정보 제외)
       const categoryLabel = product.category === 'top' ? '상의' : product.category === 'bottom' ? '하의' : '액세서리';
-      const searchQuery = `${categoryLabel} ${product.name}`;
+      // product.name에서 HEX 색상 코드 제거 (#FFFFFF, #fff 등)
+      const cleanProductName = product.name.replace(/#[0-9A-Fa-f]{3,6}\b/gi, '').trim();
+      const searchQuery = `${categoryLabel} ${cleanProductName}`;
       const encodedQuery = encodeURIComponent(searchQuery);
       const searchUrl = `https://www.musinsa.com/search/musinsa/goods?q=${encodedQuery}`;
 
