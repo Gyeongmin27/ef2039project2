@@ -63,13 +63,13 @@ export default function ImageUpload({
             <select
               value={tpo.time}
               onChange={(e) => handleTpoChange('time', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">선택하세요</option>
-              <option value="morning">아침</option>
-              <option value="afternoon">오후</option>
-              <option value="evening">저녁</option>
-              <option value="night">밤</option>
+              <option value="" className="text-gray-500">선택하세요</option>
+              <option value="morning" className="text-gray-900">아침</option>
+              <option value="afternoon" className="text-gray-900">오후</option>
+              <option value="evening" className="text-gray-900">저녁</option>
+              <option value="night" className="text-gray-900">밤</option>
             </select>
           </div>
 
@@ -81,16 +81,16 @@ export default function ImageUpload({
             <select
               value={tpo.place}
               onChange={(e) => handleTpoChange('place', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">선택하세요</option>
-              <option value="office">사무실</option>
-              <option value="school">학교</option>
-              <option value="cafe">카페</option>
-              <option value="restaurant">레스토랑</option>
-              <option value="party">파티/행사</option>
-              <option value="outdoor">야외</option>
-              <option value="casual">캐주얼</option>
+              <option value="" className="text-gray-500">선택하세요</option>
+              <option value="office" className="text-gray-900">사무실</option>
+              <option value="school" className="text-gray-900">학교</option>
+              <option value="cafe" className="text-gray-900">카페</option>
+              <option value="restaurant" className="text-gray-900">레스토랑</option>
+              <option value="party" className="text-gray-900">파티/행사</option>
+              <option value="outdoor" className="text-gray-900">야외</option>
+              <option value="casual" className="text-gray-900">캐주얼</option>
             </select>
           </div>
 
@@ -102,15 +102,15 @@ export default function ImageUpload({
             <select
               value={tpo.occasion}
               onChange={(e) => handleTpoChange('occasion', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              <option value="">선택하세요</option>
-              <option value="daily">일상</option>
-              <option value="business">비즈니스</option>
-              <option value="date">데이트</option>
-              <option value="formal">정장</option>
-              <option value="casual">캐주얼</option>
-              <option value="sport">운동</option>
+              <option value="" className="text-gray-500">선택하세요</option>
+              <option value="daily" className="text-gray-900">일상</option>
+              <option value="business" className="text-gray-900">비즈니스</option>
+              <option value="date" className="text-gray-900">데이트</option>
+              <option value="formal" className="text-gray-900">정장</option>
+              <option value="casual" className="text-gray-900">캐주얼</option>
+              <option value="sport" className="text-gray-900">운동</option>
             </select>
           </div>
         </div>
