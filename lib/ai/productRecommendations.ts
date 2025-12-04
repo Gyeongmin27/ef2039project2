@@ -144,6 +144,5 @@ ${improvements.map(imp => `- ${imp.category}: ${imp.suggestion}`).join('\n')}
       ],
       summary: '기본적인 무지 아이템으로 시작하여 점진적으로 스타일을 개선하세요.',
     };
-  }
 }
 
