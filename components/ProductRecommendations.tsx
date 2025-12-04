@@ -86,23 +86,31 @@ export default function ProductRecommendations({ recommendations }: ProductRecom
                   <h4 className="font-bold text-lg text-gray-900">{product.name}</h4>
                 </div>
                 <p className="text-gray-700 mb-2 font-medium">{product.description}</p>
-                {product.color && (
-                  <div className="flex items-center space-x-3 mb-2">
-                    <span className="text-sm text-gray-600">추천 색상:</span>
-                    <div
-                      className="w-8 h-8 rounded border-2 border-gray-300 shadow-sm"
-                      style={{ backgroundColor: product.color }}
-                    />
-                    <div className="flex flex-col">
-                      <span className="text-sm font-medium text-gray-900">{product.color}</span>
-                      {product.color.match(/^#[0-9A-Fa-f]{6}$/) && (
-                        <span className="text-xs text-gray-500">
-                          RGB({parseInt(product.color.slice(1, 3), 16)}, {parseInt(product.color.slice(3, 5), 16)}, {parseInt(product.color.slice(5, 7), 16)})
-                        </span>
+                {product.color && (() => {
+                  // HEX 코드 추출 (예: "#2C3E50 (다크 네이비)" -> "#2C3E50")
+                  const hexMatch = product.color.match(/#[0-9A-Fa-f]{6}/i);
+                  const hexColor = hexMatch ? hexMatch[0] : (product.color.match(/^#[0-9A-Fa-f]{3,6}$/i) ? product.color : null);
+                  
+                  return (
+                    <div className="flex items-center space-x-3 mb-2">
+                      <span className="text-sm text-gray-600">추천 색상:</span>
+                      {hexColor && (
+                        <div
+                          className="w-8 h-8 rounded border-2 border-gray-300 shadow-sm"
+                          style={{ backgroundColor: hexColor }}
+                        />
                       )}
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-gray-900">{product.color}</span>
+                        {hexColor && hexColor.match(/^#[0-9A-Fa-f]{6}$/i) && (
+                          <span className="text-xs text-gray-500">
+                            RGB({parseInt(hexColor.slice(1, 3), 16)}, {parseInt(hexColor.slice(3, 5), 16)}, {parseInt(hexColor.slice(5, 7), 16)})
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  );
+                })()}
                 {product.style && (
                   <p className="text-sm text-gray-600 mb-2">
                     스타일: <span className="font-medium">{product.style}</span>

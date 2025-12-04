@@ -129,16 +129,24 @@ export default function Home() {
                   <h4 class="font-bold text-lg text-gray-900">${escapeHtml(product.name)}</h4>
                 </div>
                 <p class="text-gray-700 mb-2 font-medium">${escapeHtml(product.description)}</p>
-                ${product.color ? `
+                ${product.color ? (() => {
+                  // HEX 코드 추출 (예: "#2C3E50 (다크 네이비)" -> "#2C3E50")
+                  const hexMatch = product.color.match(/#[0-9A-Fa-f]{6}/i);
+                  const hexColor = hexMatch ? hexMatch[0] : (product.color.match(/^#[0-9A-Fa-f]{3,6}$/i) ? product.color : null);
+                  const colorRgb = hexColor && hexColor.match(/^#[0-9A-Fa-f]{6}$/i) 
+                    ? `RGB(${parseInt(hexColor.slice(1, 3), 16)}, ${parseInt(hexColor.slice(3, 5), 16)}, ${parseInt(hexColor.slice(5, 7), 16)})`
+                    : '';
+                  return `
                   <div class="flex items-center space-x-3 mb-2">
                     <span class="text-sm text-gray-600">추천 색상:</span>
-                    <div class="w-8 h-8 rounded border-2 border-gray-300 shadow-sm" style="background-color: ${escapeHtml(product.color)}"></div>
+                    ${hexColor ? `<div class="w-8 h-8 rounded border-2 border-gray-300 shadow-sm" style="background-color: ${hexColor}"></div>` : ''}
                     <div class="flex flex-col">
                       <span class="text-sm font-medium text-gray-900">${escapeHtml(product.color)}</span>
                       ${colorRgb ? `<span class="text-xs text-gray-500">${colorRgb}</span>` : ''}
                     </div>
                   </div>
-                ` : ''}
+                `;
+                })() : ''}
                 ${product.style ? `
                   <p class="text-sm text-gray-600 mb-2">
                     스타일: <span class="font-medium">${escapeHtml(product.style)}</span>
