@@ -5,21 +5,26 @@ AI 기반 패션 스타일 종합 평가 웹 애플리케이션입니다. 사용
 ## 주요 기능
 
 - 📸 실제 사람 사진 업로드 (드래그 앤 드롭 지원)
-- 🤖 AI 기반 패션 스타일 분석
+- 🕐 TPO(Time, Place, Occasion) 선택 기능
+- 🤖 AI 기반 패션 스타일 분석 (Gemini 2.5 Flash)
 - 📊 7개 항목별 세부 점수 제공
 - 🎯 총점 및 등급 (S, A, B, C, D, F) 표시
 - 💡 구체적인 개선점 제시
 - 📈 시각적 차트 (레이더 차트, 진행 바)
+- 👔 패션 비평가 평가 (AI 생성)
+- 🛍️ 구매 추천 아이템 (AI 생성, 무신사 검색 연동)
+- 💰 예상 가격 정보 제공
 
 ## 기술 스택
 
 - **프론트엔드**: Next.js 14, React, TypeScript, Tailwind CSS
 - **백엔드**: Next.js API Routes, Vercel Serverless Functions
-- **AI/ML**: Google Gemini API (gemini-1.5-flash)
+- **AI/ML**: Google Gemini API (gemini-2.5-flash)
 - **데이터베이스**: Supabase (PostgreSQL)
 - **스토리지**: Supabase Storage
 - **차트**: Recharts
 - **이미지 처리**: react-dropzone, sharp
+- **배포**: Vercel
 
 ## 시작하기
 
@@ -97,17 +102,63 @@ npm run dev
 
 브라우저에서 [http://localhost:3000](http://localhost:3000)을 열어 확인하세요.
 
+## Vercel 배포
+
+### 1. GitHub 저장소 준비
+
+프로젝트가 이미 GitHub에 푸시되어 있어야 합니다:
+- 저장소: https://github.com/Gyeongmin27/EF2039_p_2.git
+
+### 2. Vercel 프로젝트 생성
+
+1. [Vercel](https://vercel.com)에 로그인
+2. "Add New Project" 클릭
+3. GitHub 저장소 선택: `Gyeongmin27/EF2039_p_2`
+4. 프로젝트 설정:
+   - **Framework Preset**: Next.js (자동 감지)
+   - **Root Directory**: `./` (기본값)
+   - **Build Command**: `npm run build` (자동)
+   - **Output Directory**: `.next` (자동)
+
+### 3. 환경 변수 설정
+
+Vercel 대시보드에서 다음 환경 변수를 추가하세요:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+GEMINI_API_KEY=your_gemini_api_key
+```
+
+**설정 방법:**
+1. 프로젝트 설정 → Environment Variables
+2. 각 변수를 추가 (Production, Preview, Development 모두 선택)
+3. Save 클릭
+
+### 4. 배포
+
+1. "Deploy" 버튼 클릭
+2. 배포가 완료되면 자동으로 URL이 생성됩니다
+3. 배포된 사이트에서 테스트하세요
+
+### 5. 자동 배포
+
+GitHub에 푸시하면 자동으로 재배포됩니다:
+- `main` 브랜치에 푸시 → Production 배포
+- 다른 브랜치에 푸시 → Preview 배포
+
 ## 점수 체계
 
-총점은 100점 만점이며, 다음 7개 항목의 가중 평균으로 계산됩니다:
+총점은 100점 만점이며, 다음 7개 항목의 합산으로 계산됩니다:
 
-1. **색상 조화도** (25점, 25%)
-2. **스타일 일관성** (20점, 20%)
-3. **패턴 조합** (15점, 15%)
-4. **비율 및 실루엣** (15점, 15%)
-5. **텍스처 조화** (10점, 10%)
-6. **상황 적합성** (10점, 10%)
-7. **전체적 조화** (5점, 5%)
+1. **색상 조화도** (18점)
+2. **스타일 일관성** (18점)
+3. **패턴 조합** (10점)
+4. **비율 및 실루엣** (10점)
+5. **텍스처 조화** (10점)
+6. **상황적합성** (30점) - TPO(Time, Place, Occasion) 기반 평가
+7. **전체적 조화** (4점)
 
 등급 체계:
 
